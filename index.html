@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 3D - FBX</title>
+    
+    <!-- Cargar A-Frame -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    
+    <!-- Cargar fflate (necesario para FBXLoader) -->
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.min.js"></script>
+    
+    <!-- Cargar FBXLoader -->
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/FBXLoader.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="debugUIEnabled: false;" vr-mode-ui="enabled: false">
+        <a-entity light="type: directional; castShadow: true; intensity: 10;" position="1 1 1"></a-entity>
+        <a-marker preset="hiro">
+            <a-entity id="fbx-model" scale="0.05 0.05 0.05" position="0 0 0"></a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        AFRAME.registerComponent('load-fbx', {
+            init: function () {
+                var el = this.el;
+                var scene = el.sceneEl.object3D; // Acceder a la escena de A-Frame
+                
+                // Verifica que fflate esté cargado antes de usar FBXLoader
+                if (typeof fflate === 'undefined') {
+                    console.error("fflate.min.js no está cargado correctamente.");
+                    return;
+                }
+
+                var loader = new THREE.FBXLoader();
+
+                loader.load('/VICTOR HERRERA_3DMODEL_01.fbx', function (object) {
+                    object.position.set(0, 0, 0);
+                    object.scale.set(0.01, 0.01, 0.01); // Ajusta la escala según el modelo
+                    scene.add(object);
+                    el.setObject3D('mesh', object);
+                    console.log("Modelo FBX cargado correctamente.");
+                }, function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% cargado');
+                }, function (error) {
+                    console.error('Error al cargar el modelo FBX', error);
+                });
+            }
+        });
+
+        document.getElementById('fbx-model').setAttribute('load-fbx', '');
+    </script>
+</body>
+</html>
